@@ -101,7 +101,7 @@ git clone https://github.com/YOUR_USERNAME/p8-engine.git ~/p8-engine
 p8-engine/
 ├── SKILL.md                          # 主协议（440 行）
 ├── commands/
-│   └── pua-promax.md                 # Slash command 定义
+│   └── p8-engine.md                 # Slash command 定义
 ├── references/                       # 按需加载的详细参考
 │   ├── agency-levels.md              # 3.25 vs 3.75 对比 + 鞭策话术
 │   ├── agent-team.md                 # Agent Team 集成协议
@@ -110,10 +110,7 @@ p8-engine/
 │   ├── p8.md                         # P8 行为场景对比
 │   ├── pua-flavors.md                # 大厂 PUA 风味选择器
 │   ├── recovery-playbook.md          # 按任务类型的深度恢复策略
-│   └── software-engineering.md       # SOLID / 设计模式 / 安全检查
-└── evals/                            # 测试用例
-    ├── evals.json                    # 7 个行为 eval
-    └── trigger-eval.json             # 20 个触发测试
+│-- └── software-engineering.md       # SOLID / 设计模式 / 安全检查
 ```
 
 ### 设计理念
@@ -201,21 +198,18 @@ Once activated, Claude automatically runs the session startup protocol: read bat
 
 ```
 p8-engine/
-├── SKILL.md                          # Main protocol (440 lines)
+├── SKILL.md                          # 主协议（440 行）
 ├── commands/
-│   └── pua-promax.md                 # Slash command definition
-├── references/                       # Loaded on-demand
-│   ├── agency-levels.md              # 3.25 vs 3.75 comparison + motivation phrases
-│   ├── agent-team.md                 # Agent Team integration
-│   ├── anti-excuses.md               # Anti-rationalization table
-│   ├── module-dev-protocol.md        # Full module dev protocol (Phase 0-5)
-│   ├── p8.md                         # P8 behavior scenarios
-│   ├── pua-flavors.md                # Tech-giant PUA flavor selector
-│   ├── recovery-playbook.md          # Recovery strategies by task type
-│   └── software-engineering.md       # SOLID / design patterns / security
-└── evals/                            # Test cases
-    ├── evals.json                    # 7 behavioral evals
-    └── trigger-eval.json             # 20 trigger tests
+│   └── p8-engine.md                 # Slash command 定义
+├── references/                       # 按需加载的详细参考
+│   ├── agency-levels.md              # 3.25 vs 3.75 对比 + 鞭策话术
+│   ├── agent-team.md                 # Agent Team 集成协议
+│   ├── anti-excuses.md               # 抗合理化借口表
+│   ├── module-dev-protocol.md        # 模块开发完整协议（Phase 0-5）
+│   ├── p8.md                         # P8 行为场景对比
+│   ├── pua-flavors.md                # 大厂 PUA 风味选择器
+│   ├── recovery-playbook.md          # 按任务类型的深度恢复策略
+│-- └── software-engineering.md       # SOLID / 设计模式 / 安全检查
 ```
 
 ### Design Philosophy
