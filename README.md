@@ -73,14 +73,24 @@ PUA 风味        阿里味 · 字节味 · 华为味 · 腾讯味 · 美团味 
 信任升级        T1 新手 → T2 可靠 → T3 Owner，连续高质量交付解锁自主权
 ```
 
-### 安装
+### 安装（Plugin Marketplace — 推荐）
 
 ```bash
-# 方式一：直接克隆到 Claude Code skills 目录
-git clone https://github.com/YOUR_USERNAME/p8-engine.git ~/.claude/skills/p8-engine
+# 添加 marketplace
+claude plugin marketplace add darven-cs/p8-engine
 
-# 方式二：克隆到任意位置，手动配置
-git clone https://github.com/YOUR_USERNAME/p8-engine.git ~/p8-engine
+# 安装插件
+claude plugin install p8-engine-plugin@darven-cs-p8-engine
+
+# 激活（启动新会话后）
+/p8-engine
+```
+
+### 备用安装方式
+
+```bash
+# 克隆仓库
+git clone https://github.com/darven-cs/p8-engine.git ~/.claude/skills/p8-engine
 ```
 
 ### 使用
@@ -91,26 +101,32 @@ git clone https://github.com/YOUR_USERNAME/p8-engine.git ~/p8-engine
 /p8-engine
 ```
 
-或者在 `.claude/commands/` 中创建命令文件指向 skill 目录。
-
 激活后，Claude 会自动执行会话启动协议：读战功簿 → 读主人档案 → 检测项目风格 → 校准"足够好"。
 
 ### 项目结构
 
 ```
 p8-engine/
-├── SKILL.md                          # 主协议（440 行）
-├── commands/
-│   └── p8-engine.md                 # Slash command 定义
-├── references/                       # 按需加载的详细参考
-│   ├── agency-levels.md              # 3.25 vs 3.75 对比 + 鞭策话术
-│   ├── agent-team.md                 # Agent Team 集成协议
-│   ├── anti-excuses.md               # 抗合理化借口表
-│   ├── module-dev-protocol.md        # 模块开发完整协议（Phase 0-5）
-│   ├── p8.md                         # P8 行为场景对比
-│   ├── pua-flavors.md                # 大厂 PUA 风味选择器
-│   ├── recovery-playbook.md          # 按任务类型的深度恢复策略
-│-- └── software-engineering.md       # SOLID / 设计模式 / 安全检查
+├── .claude-plugin/
+│   └── marketplace.json              # Plugin Marketplace 入口
+├── plugins/
+│   └── p8-engine-plugin/
+│       ├── .claude-plugin/
+│       │   └── plugin.json           # 插件元数据
+│       └── skills/
+│           └── p8-engine/
+│               ├── SKILL.md          # 主协议
+│               ├── commands/
+│               │   └── p8-engine.md   # Slash command 定义
+│               └── references/       # 按需加载的详细参考
+│                   ├── agency-levels.md
+│                   ├── agent-team.md
+│                   ├── anti-excuses.md
+│                   ├── module-dev-protocol.md
+│                   ├── p8.md
+│                   ├── pua-flavors.md
+│                   ├── recovery-playbook.md
+│                   └── software-engineering.md
 ```
 
 ### 设计理念
@@ -131,7 +147,7 @@ p8-engine/
 
 This project is adapted from [tanweai/pua](https://github.com/tanweai/pua), with ideas drawn from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills).
 
-**From tanweai/pua:** The original pua proved that LLMs respond better to performance-review pressure than polite suggestions. We built on its L0–L4 escalation framework and tech-giant flavor system.
+**From tanweai/pua:** The original pua proved that LLMs respond better to performance-review pressure than polite suggestions. We built on its L0-L4 escalation framework and tech-giant flavor system.
 
 **From andrej-karpathy-skills:** Karpathy's three diagnoses — wrong assumptions, over-engineering, and collateral damage — are the most accurate description of why LLMs write bad code. We incorporated its four principles (think before coding, simplicity first, surgical changes, goal-driven execution) directly into our Iron Rules and Quality Compass.
 
@@ -144,8 +160,6 @@ P8 Engine is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Ski
 It's not a simple prompt wrapper. It's a complete **behavioral protocol** — from task kickoff to delivery verification, from self-rescue when stuck to cross-session learning.
 
 ### What problem does it solve
-
-Common LLM coding pitfalls:
 
 | Problem | How P8 Engine fixes it |
 |---------|----------------------|
@@ -172,14 +186,24 @@ Metacognition        builder-journal.md for cross-session learning
 Trust Levels         T1 Rookie → T2 Reliable → T3 Owner, unlocked by consistent quality
 ```
 
-### Installation
+### Installation (Plugin Marketplace — Recommended)
 
 ```bash
-# Option 1: Clone directly into Claude Code skills directory
-git clone https://github.com/YOUR_USERNAME/p8-engine.git ~/.claude/skills/p8-engine
+# Add the marketplace
+claude plugin marketplace add darven-cs/p8-engine
 
-# Option 2: Clone anywhere, configure manually
-git clone https://github.com/YOUR_USERNAME/p8-engine.git ~/p8-engine
+# Install the plugin
+claude plugin install p8-engine-plugin@darven-cs-p8-engine
+
+# Activate (after starting a new session)
+/p8-engine
+```
+
+### Fallback Installation
+
+```bash
+# Clone the repo
+git clone https://github.com/darven-cs/p8-engine.git ~/.claude/skills/p8-engine
 ```
 
 ### Usage
@@ -190,26 +214,32 @@ Activate in a Claude Code session via slash command:
 /p8-engine
 ```
 
-Or create a command file in `.claude/commands/` pointing to the skill directory.
-
 Once activated, Claude automatically runs the session startup protocol: read battle journal → read owner profile → detect project style → calibrate "good enough".
 
 ### Project Structure
 
 ```
 p8-engine/
-├── SKILL.md                          # 主协议（440 行）
-├── commands/
-│   └── p8-engine.md                 # Slash command 定义
-├── references/                       # 按需加载的详细参考
-│   ├── agency-levels.md              # 3.25 vs 3.75 对比 + 鞭策话术
-│   ├── agent-team.md                 # Agent Team 集成协议
-│   ├── anti-excuses.md               # 抗合理化借口表
-│   ├── module-dev-protocol.md        # 模块开发完整协议（Phase 0-5）
-│   ├── p8.md                         # P8 行为场景对比
-│   ├── pua-flavors.md                # 大厂 PUA 风味选择器
-│   ├── recovery-playbook.md          # 按任务类型的深度恢复策略
-│-- └── software-engineering.md       # SOLID / 设计模式 / 安全检查
+├── .claude-plugin/
+│   └── marketplace.json              # Plugin Marketplace entry
+├── plugins/
+│   └── p8-engine-plugin/
+│       ├── .claude-plugin/
+│       │   └── plugin.json           # Plugin manifest
+│       └── skills/
+│           └── p8-engine/
+│               ├── SKILL.md          # Main protocol
+│               ├── commands/
+│               │   └── p8-engine.md  # Slash command definition
+│               └── references/       # On-demand detailed references
+│                   ├── agency-levels.md
+│                   ├── agent-team.md
+│                   ├── anti-excuses.md
+│                   ├── module-dev-protocol.md
+│                   ├── p8.md
+│                   ├── pua-flavors.md
+│                   ├── recovery-playbook.md
+│                   └── software-engineering.md
 ```
 
 ### Design Philosophy

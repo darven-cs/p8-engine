@@ -1,0 +1,14 @@
+{
+  "name": "p8-engine-marketplace",
+  "owner": {
+    "name": "darven",
+    "email": "1926248272@qq.com"
+  },
+  "plugins": [
+    {
+      "name": "p8-engine-plugin",
+      "source": "./plugins/p8-engine-plugin",
+      "description": "Always-on high-agency P8 engineering mindset — verify before assume, own end-to-end, never shallow output."
+    }
+  ]
+}
