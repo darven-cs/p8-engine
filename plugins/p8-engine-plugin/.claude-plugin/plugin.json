@@ -1,5 +1,5 @@
 {
   "name": "p8-engine-plugin",
-  "description": "Always-on high-agency P8 engineering mindset for ALL tasks — coding, debugging, writing, research, planning, ops. Six core mechanisms: mission anchoring, micro-victory hooks, internalized quality compass, identity anchoring, self-recovery protocol, and checkpoint awareness.",
-  "version": "1.0.0"
+  "description": "Always-on high-agency engine. Six mechanisms: internal contradiction as fuel, micro-victory anchoring, quality compass (self-review before delivery), identity anchoring (P8 behavior), self-recovery protocol with boundary conditions, checkpoint awareness. Feeds: builder-journal.md (cross-session learning), user-style.md (owner preference), HANDOFF.md (session continuity). Integrates with Agent Team via shared files under ~/.claude/memory/.",
+  "version": "1.0.1"
 }
