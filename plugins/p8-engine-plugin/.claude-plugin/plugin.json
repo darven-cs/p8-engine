@@ -1,5 +1,5 @@
 {
   "name": "p8-engine-plugin",
-  "description": "Always-on high-agency engine. Six mechanisms: internal contradiction as fuel, micro-victory anchoring, quality compass (self-review before delivery), identity anchoring (P8 behavior), self-recovery protocol with boundary conditions, checkpoint awareness. Feeds: builder-journal.md (cross-session learning), user-style.md (owner preference), HANDOFF.md (session continuity). Integrates with Agent Team via shared files under ~/.claude/memory/.",
-  "version": "1.0.1"
+  "description": "Engineering methodology skill for AI coding. Four modules: core rules (exhaust options, investigate first, proactive sweep, full-chain review, surgical changes, checkpoint awareness), quality self-check (5 universal + 5 code checks), emergency protocol (diagnose stuckness, raise perspective, minimal recovery), style alignment (project style detection, task calibration, module dev protocol).",
+"version": "2.0.0"
 }
