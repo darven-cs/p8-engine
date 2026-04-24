@@ -65,6 +65,8 @@ git clone https://github.com/darven-cs/p8-engine.git ~/.claude/skills/p8-engine
 /p8-engine
 ```
 
+![案例1](docs/images/example1.png)
+
 ### 项目结构
 
 ```
