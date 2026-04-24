@@ -14,7 +14,7 @@
 
 P8 Engine 是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 的 Skill，为 AI 编码提供系统化的工程方法论。
 
-不是 prompt wrapper。它是 4 大模块组成的行为协议：核心铁律、质量自检、应急流程、风格对齐。
+不是 prompt wrapper。它是 5 大模块组成的行为协议：会话启动协议、核心铁律、质量自检、应急流程、模块开发。
 
 ### 它解决什么问题
 
@@ -31,13 +31,14 @@ P8 Engine 是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code
 | 卡壳反复微调同一方案 | 应急流程：诊断 → 最小行动 → 渐进恢复 |
 | 交付质量参差不齐 | 质量自检：正确性 / 完整性 / 精准度 / 简洁性 / 诚实度 |
 
-### 四大模块
+### 五大模块
 
 ```
-核心铁律    穷尽方案 · 先查后问 · 主动延伸 · 全链路排查 · 精准修改 · 检查点意识
-质量自检    5 项通用自检 + 5 项代码自检，交付前必过
-应急流程    诊断卡壳 → 拉高视角 → 最小行动恢复 → 穷尽后结构化退出
-风格对齐    项目风格检测 + 任务校准 + 模块开发协议
+会话启动协议  风格检测 → 任务校准 → 确认激活，skill 加载后立即执行
+核心铁律      穷尽方案 · 先查后问 · 主动延伸 · 全链路排查 · 精准修改 · 检查点意识
+质量自检      5 项通用自检 + 5 项代码自检，交付前必过
+应急流程      诊断卡壳 → 拉高视角 → 最小行动恢复 → 穷尽后结构化退出
+模块开发      Phase 0-4：读 → 设计契约 → 自检 → 实现 → 验证
 ```
 
 ### 安装（Plugin Marketplace）
@@ -95,7 +96,7 @@ p8-engine/
 
 P8 Engine is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Skill providing systematic engineering methodology for AI coding.
 
-It's a behavioral protocol in 4 modules: Core Rules, Quality Self-Check, Emergency Protocol, Style Alignment.
+It's a behavioral protocol in 5 modules: Session Startup, Core Rules, Quality Self-Check, Emergency Protocol, Module Development.
 
 ### What problem does it solve
 
@@ -112,14 +113,15 @@ It's a behavioral protocol in 4 modules: Core Rules, Quality Self-Check, Emergen
 | Stuck tweaking same approach | Emergency protocol: diagnose → minimal action → recover |
 | Inconsistent delivery quality | Quality check: correctness / completeness / precision / simplicity / honesty |
 
-### Four Modules
+### Five Modules
 
 ```
+Session Startup    Style detection → Task calibration → Activation confirm, runs on skill load
 Core Rules         Exhaust options · Investigate first · Proactive sweep ·
                    Full-chain review · Surgical changes · Checkpoint awareness
 Quality Self-Check 5 universal + 5 code-specific checks before delivery
 Emergency Protocol Diagnose stuckness → raise perspective → minimal recovery → structured exit
-Style Alignment    Project style detection + task calibration + module dev protocol
+Module Development Phase 0-4: Read → Design contract → Self-check → Implement → Verify
 ```
 
 ### Installation (Plugin Marketplace)
