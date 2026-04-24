@@ -47,7 +47,7 @@ P8 Engine 是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code
 claude plugin marketplace add darven-cs/p8-engine
 
 # 安装插件
-claude plugin install p8-engine-plugin@darven-cs-p8-engine
+claude plugin install p8-engine@p8-engine
 
 # 激活（启动新会话后）
 /p8-engine
@@ -124,7 +124,7 @@ Style Alignment    Project style detection + task calibration + module dev proto
 
 ```bash
 claude plugin marketplace add darven-cs/p8-engine
-claude plugin install p8-engine-plugin@darven-cs-p8-engine
+claude plugin install p8-engine@p8-engine
 /p8-engine
 ```
 
