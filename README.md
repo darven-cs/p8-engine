@@ -60,13 +60,15 @@ claude plugin install p8-engine@p8-engine
 git clone https://github.com/darven-cs/p8-engine.git ~/.claude/skills/p8-engine
 ```
 
-### 使用
+### 使用教程
 
-```
-/p8-engine
-```
+[使用教程](docs/tutorial.md)
 
+1.通过`/p8-engine`注入skills,然后在执行任务
 ![案例1](docs/images/example1.png)
+
+2.如果遇到Bug修复问题，能出色的使用全链路排查，避免AI无头绪的乱跑，减少发散
+![案例2](docs/images/example2.png)
 
 ### 项目结构
 
