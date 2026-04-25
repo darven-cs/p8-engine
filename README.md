@@ -70,6 +70,9 @@ git clone https://github.com/darven-cs/p8-engine.git ~/.claude/skills/p8-engine
 2.如果遇到Bug修复问题，能出色的使用全链路排查，避免AI无头绪的乱跑，减少发散
 ![案例2](docs/images/example2.png)
 
+3.处理复杂问题，需要调研，优先扫描项目，然后再去调研
+![方案2](docs/images/example3.png)
+
 ### 项目结构
 
 ```
