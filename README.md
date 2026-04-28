@@ -1,8 +1,8 @@
 # P8 Engine
 
-**工程方法论 skill —— 让 AI 编码遵循系统化的工程原则，减少返工、提高交付质量。**
+**工程方法论 + AI 记忆系统 —— 一个 plugin，两个 skills，全面提升 AI 编码质量。**
 
-> Engineering methodology skill for AI coding — systematic principles to reduce rework and improve delivery quality.
+> Engineering methodology + AI memory system — one plugin, two skills,全面提升 AI coding quality.
 
 [中文](#中文) | [English](#english)
 
@@ -12,11 +12,30 @@
 
 ### 这是什么
 
-P8 Engine 是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 的 Skill，为 AI 编码提供系统化的工程方法论。
+P8 Engine 是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Plugin，包含两个 skills：
+
+| Skill | 用途 | 触发方式 |
+|-------|------|----------|
+| **p8-engine** | 工程方法论 — 核心铁律、质量自检、应急流程、风格对齐 | `/p8-engine` |
+| **inject-memory** | 给任意项目注入轻量 AI 记忆系统 | `/inject-memory` |
+
+### 安装
+
+```bash
+# 添加 marketplace
+claude plugin marketplace add darven-cs/p8-engine
+
+# 安装 plugin（一次安装，两个 skills 都可用）
+claude plugin install p8-engine@p8-engine
+
+# 激活（启动新会话后）
+/p8-engine          # 激活工程方法论
+/inject-memory      # 注入记忆系统到目标项目
+```
+
+### p8-engine 使用
 
 不是 prompt wrapper。它是 5 大模块组成的行为协议：会话启动协议、核心铁律、质量自检、应急流程、模块开发。
-
-### 它解决什么问题
 
 | LLM 编码常见问题 | P8 Engine 怎么治 |
 |-----------------|-----------------|
@@ -31,8 +50,6 @@ P8 Engine 是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code
 | 卡壳反复微调同一方案 | 应急流程：诊断 → 最小行动 → 渐进恢复 |
 | 交付质量参差不齐 | 质量自检：正确性 / 完整性 / 精准度 / 简洁性 / 诚实度 |
 
-### 五大模块
-
 ```
 会话启动协议  风格检测 → 任务校准 → 确认激活，skill 加载后立即执行
 核心铁律      穷尽方案 · 先查后问 · 主动延伸 · 全链路排查 · 精准修改 · 检查点意识
@@ -41,24 +58,21 @@ P8 Engine 是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code
 模块开发      Phase 0-4：读 → 设计契约 → 自检 → 实现 → 验证
 ```
 
-### 安装（Plugin Marketplace）
+### inject-memory 使用
+
+给任意项目一键注入 AI 记忆系统：
 
 ```bash
-# 添加 marketplace
-claude plugin marketplace add darven-cs/p8-engine
-
-# 安装插件
-claude plugin install p8-engine@p8-engine
-
-# 激活（启动新会话后）
-/p8-engine
+cd /path/to/your-project
+/inject-memory
 ```
 
-### 备用安装
+注入后项目新增：
+- `memory/` 目录（索引 + 模板 + 教程）
+- `.claude/hooks/sync-memory-index.mjs`（PostToolUse 自动同步脚本）
+- `CLAUDE.md` 追加记忆使用规范
 
-```bash
-git clone https://github.com/darven-cs/p8-engine.git ~/.claude/skills/p8-engine
-```
+之后每次新 Claude 会话都会加载 `memory/_index.md`，自动感知项目上下文。
 
 ### 使用教程
 
@@ -82,19 +96,25 @@ git clone https://github.com/darven-cs/p8-engine.git ~/.claude/skills/p8-engine
 ```
 p8-engine/
 ├── .claude-plugin/
-│   └── marketplace.json
+│   └── marketplace.json              # marketplace 注册
 ├── plugins/
-│   └── p8-engine-plugin/
+│   └── p8-engine-plugin/             # 唯一的 plugin
 │       ├── .claude-plugin/
-│       │   └── plugin.json
-│       └── skills/
-│           └── p8-engine/
-│               ├── SKILL.md              # 主协议（唯一核心文件）
-│               ├── commands/
-│               │   └── p8-engine.md      # Slash command 定义
-│               └── references/           # 按需加载
-│                   ├── module-dev-protocol.md
-│                   └── software-engineering.md
+│       │   └── plugin.json           # plugin 清单
+│       ├── skills/
+│       │   ├── p8-engine/            # 工程方法论 skill
+│       │   │   ├── SKILL.md
+│       │   │   └── references/
+│       │   └── inject-memory/        # 记忆系统注入 skill
+│       │       ├── SKILL.md
+│       │       ├── hooks/
+│       │       └── templates/
+│       └── commands/
+│           ├── p8-engine.md
+│           └── inject-memory.md
+├── docs/
+├── README.md
+└── LICENSE
 ```
 
 ---
@@ -103,11 +123,30 @@ p8-engine/
 
 ### What is this
 
-P8 Engine is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Skill providing systematic engineering methodology for AI coding.
+P8 Engine is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Plugin with two skills:
 
-It's a behavioral protocol in 5 modules: Session Startup, Core Rules, Quality Self-Check, Emergency Protocol, Module Development.
+| Skill | Purpose | Trigger |
+|-------|---------|---------|
+| **p8-engine** | Engineering methodology — core rules, quality self-check, emergency protocol, style alignment | `/p8-engine` |
+| **inject-memory** | Inject lightweight AI memory system into any project | `/inject-memory` |
 
-### What problem does it solve
+### Installation
+
+```bash
+# Add marketplace
+claude plugin marketplace add darven-cs/p8-engine
+
+# Install plugin (one install, both skills available)
+claude plugin install p8-engine@p8-engine
+
+# Activate (after starting new session)
+/p8-engine          # Activate engineering methodology
+/inject-memory      # Inject memory system into target project
+```
+
+### p8-engine Usage
+
+Not a prompt wrapper. It's a behavioral protocol in 5 modules: Session Startup, Core Rules, Quality Self-Check, Emergency Protocol, Module Development.
 
 | LLM coding problem | How P8 Engine fixes it |
 |---------------------|----------------------|
@@ -122,36 +161,21 @@ It's a behavioral protocol in 5 modules: Session Startup, Core Rules, Quality Se
 | Stuck tweaking same approach | Emergency protocol: diagnose → minimal action → recover |
 | Inconsistent delivery quality | Quality check: correctness / completeness / precision / simplicity / honesty |
 
-### Five Modules
+### inject-memory Usage
 
-```
-Session Startup    Style detection → Task calibration → Activation confirm, runs on skill load
-Core Rules         Exhaust options · Investigate first · Proactive sweep ·
-                   Full-chain review · Surgical changes · Checkpoint awareness
-Quality Self-Check 5 universal + 5 code-specific checks before delivery
-Emergency Protocol Diagnose stuckness → raise perspective → minimal recovery → structured exit
-Module Development Phase 0-4: Read → Design contract → Self-check → Implement → Verify
-```
-
-### Installation (Plugin Marketplace)
+Inject AI memory system into any project:
 
 ```bash
-claude plugin marketplace add darven-cs/p8-engine
-claude plugin install p8-engine@p8-engine
-/p8-engine
+cd /path/to/your-project
+/inject-memory
 ```
 
-### Fallback Installation
+After injection, the project gets:
+- `memory/` directory (index + templates + tutorial)
+- `.claude/hooks/sync-memory-index.mjs` (PostToolUse auto-sync script)
+- `CLAUDE.md` appended with memory usage rules
 
-```bash
-git clone https://github.com/darven-cs/p8-engine.git ~/.claude/skills/p8-engine
-```
-
-### Usage
-
-```
-/p8-engine
-```
+Every new Claude session will load `memory/_index.md` and automatically perceive project context.
 
 ### License
 

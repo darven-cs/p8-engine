@@ -1,14 +1,18 @@
 {
-  "name": "p8-engine",
-  "owner": {
-    "name": "darven",
-    "email": "1926248272@qq.com"
-  },
-  "plugins": [
-    {
-      "name": "p8-engine",
-      "source": "./plugins/p8-engine-plugin",
-      "description": "Engineering methodology skill — core rules, quality self-check, emergency protocol, style alignment. Reduce rework, improve delivery."
-    }
-  ]
+    "name": "p8-engine",
+    "version": "2.1.0",
+    "owner": {
+        "name": "darven",
+        "email": "1926248272@qq.com"
+    },
+    "plugins": [
+        {
+            "name": "p8-engine",
+            "source": "./plugins/p8-engine-plugin",
+            "description": "Engineering methodology + AI memory system. Two skills: p8-engine (core rules, quality self-check, emergency protocol, style alignment) and inject-memory (lightweight memory system injection with templates, hooks, atomic commit).",
+            "version": "2.1.0",
+            "category": "development",
+            "tags": ["engineering", "methodology", "memory", "quality"]
+        }
+    ]
 }
