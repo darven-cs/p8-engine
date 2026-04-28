@@ -11,6 +11,17 @@
 - 系统教程：`memory/_tutorial.md`（扩展用法/套用到新项目）
 
 ### 你必须遵守的记忆规则
+
+**启动协议（强制）：在执行任何代码修改前，必须完成以下步骤：**
+
+1. 扫描 `memory/_index.md`，找到与本次修改相关的条目（关键词取自即将修改的文件名、模块名、涉及的功能域）
+2. 将相关条目中的关键约束列出来，得到用户确认后才能开始写代码
+3. 修改完成后，按本规范更新相关记忆文件
+
+> 此协议由 `memory-preflight` hook 在运行时自动提醒，但你必须内化为习惯——不要等 hook 提醒才做。
+
+**日常规则：**
+
 1. **开始任务前**，先快速扫描 `memory/_index.md`，确认涉及模块的当前状态和已知约束。
 2. **任何对模块的变更**（新增功能、修改接口、改变依赖），在任务完成后，你必须：
    - 在对应模块的记忆文件中追加一条变更历史（日期 + 简要说明）
@@ -22,6 +33,8 @@
 6. **新发现通用踩坑**，按"跨模块 + 代码看不出原因"标准判断是否进 `memory/bugs/`。
 
 ### 记忆系统的自动化
-- 项目 `.claude/settings.json` 配置了 PostToolUse hook：每次 Claude 写入 `memory/modules/**` 或 `memory/bugs/**` 时，会自动把 `memory/_index.md` 对应条目的"最后更新"列同步为今天日期。
-- 如果 hook 没生效，检查 `.claude/hooks/sync-memory-index.mjs` 是否存在并可执行。
+- 项目 `.claude/settings.json` 配置了两个 hook：
+  - **PreToolUse**（`memory-preflight.mjs`）：修改非 memory/ 文件前，自动扫描 `_index.md` 中的相关条目，输出关键约束提醒
+  - **PostToolUse**（`sync-memory-index.mjs`）：修改 memory/ 文件后，自动把 `_index.md` 对应条目的"最后更新"列同步为今天日期
+- 如果 hook 没生效，检查 `.claude/hooks/` 下对应脚本是否存在并可执行。
 <!-- MEMORY-SYSTEM:END -->
