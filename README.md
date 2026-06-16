@@ -95,7 +95,6 @@ your-project/
 │       └── current-status.template.md
 ├── .claude/
 │   ├── hooks/
-│   │   ├── memory-preflight.mjs     # PreToolUse：改代码前自动提醒相关记忆
 │   │   └── sync-memory-index.mjs    # PostToolUse：改记忆后自动同步索引日期
 │   └── settings.json                # hook 注册
 └── CLAUDE.md                        # 追加了记忆使用规范
@@ -105,9 +104,7 @@ your-project/
 
 **每次新会话启动时**：Claude 自动加载 `memory/_index.md`，感知项目全貌——有哪些模块、踩过哪些坑、当前进度是什么。
 
-**每次改代码前**：PreToolUse hook 自动扫描 `_index.md`，找出和当前修改相关的记忆条目，输出关键约束提醒。不是被动等 AI 想起来，是 hook 主动喂给它。
-
-**每次改记忆后**：PostToolUse hook 自动把 `_index.md` 对应条目的"最后更新"日期同步为今天。
+**每次改记忆后**：PostToolUse hook 自动把 `_index.md` 对应条目的"最后更新"日期同步为今天（一次可更新所有匹配行）。
 
 **记忆不会丢**：结构化模板 + 索引 + hook 三件套，跨会话持久化。
 
@@ -163,7 +160,7 @@ progress/
 | 存储位置 | `~/.claude/` 用户级 | 项目 `memory/` 目录 |
 | 谁能读 | 只有你自己 | 所有项目协作者（git 管理） |
 | 结构 | 扁平 markdown | 索引 + 模板 + 分类目录 |
-| 自动化 | 无 | PreToolUse/PostToolUse hooks |
+| 自动化 | 无 | PostToolUse hook（自动同步索引日期） |
 | 适用场景 | 个人偏好、通用习惯 | 项目架构、设计决策、踩坑记录 |
 
 **两者互补**：auto memory 记你是什么样的开发者，inject-memory 记这个项目是什么样的项目。
@@ -339,10 +336,10 @@ cd /path/to/your-project
 
 After injection:
 - `memory/` directory with structured templates (modules/bugs/progress)
-- `.claude/hooks/` with PreToolUse (constraint reminders) and PostToolUse (index sync) hooks
+- `.claude/hooks/` with a PostToolUse hook (index sync)
 - `CLAUDE.md` appended with memory usage rules
 
-Every new Claude session loads `memory/_index.md` automatically. The PreToolUse hook scans related memory entries before code modifications. The PostToolUse hook syncs index timestamps after memory updates.
+Every new Claude session loads `memory/_index.md` automatically. The PostToolUse hook syncs index timestamps after memory updates.
 
 #### What to remember
 

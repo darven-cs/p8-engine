@@ -4,12 +4,14 @@
  *
  * Claude Code PostToolUse hook.
  * 用途：Claude 用 Edit/Write 改动了 memory/modules/** 或 memory/bugs/** 的文件后，
- *       自动把 memory/_index.md 中对应条目的"最后更新"列同步为今天日期。
+ *       自动把 memory/_index.md 中所有匹配条目的"最后更新"日期同步为今天。
  *
  * 约束：
  * - 不新建条目（新条目由 Claude 按 CLAUDE.md 规则手动加）
  * - 只替换表格行里已有的 YYYY-MM-DD 格式单元格
- * - 非 memory/ 路径或无匹配行时静默退出 0
+ * - 一次 hook 调用会更新所有匹配行（一行可能多格日期）；非 memory/ 路径或无匹配行时静默退出 0
+ * - entryKey 用词边界匹配（(?<![\w-])...(?![\w-])），避免 modules/auth 误匹配
+ *   modules/auth_legacy / modules/authorize
  *
  * 注册方式（项目根 .claude/settings.json）：
  * {
@@ -96,32 +98,39 @@ async function main() {
     const lineSep = content.includes('\r\n') ? '\r\n' : '\n';
     const lines = content.split(/\r?\n/);
 
-    let updated = false;
+    // entryKey 必须作为完整 token 出现，前后不能是 \w 或 -
+    // 这样 modules/auth 不会误匹配 modules/auth_legacy / modules/authorize
+    const escapedKey = entryKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const entryRe = new RegExp(`(?<![\\w-])${escapedKey}(?![\\w-])`);
+
+    let updatedCount = 0;
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         if (!line.startsWith('|')) continue;
-        if (!line.includes(entryKey)) continue;
+        if (!entryRe.test(line)) continue;
 
         const cells = line.split('|');
+        let lineChanged = false;
         for (let c = 0; c < cells.length; c++) {
             const t = cells[c].trim();
             if (/^\d{4}-\d{2}-\d{2}$/.test(t)) {
-                if (t === today) continue; // already today
+                if (t === today) continue; // already today, 跳过避免重复计数
                 cells[c] = cells[c].replace(t, today);
-                updated = true;
-                break; // 每行只更新一个日期列
+                lineChanged = true;
+                // 不再 break — 一行可能有"开始日期 + 最后更新"两格，都得更新
             }
         }
-        if (updated) {
+        if (lineChanged) {
             lines[i] = cells.join('|');
-            break; // 每次 hook 只更新一行
+            updatedCount++;
+            // 不再 break — 大模块子目录被改时，索引里可能有多行相关条目，全部更新
         }
     }
 
-    if (updated) {
+    if (updatedCount > 0) {
         writeFileSync(indexPath, lines.join(lineSep), 'utf8');
         process.stdout.write(JSON.stringify({
-            additionalContext: `[memory-index] ${entryKey} last-updated bumped to ${today}`,
+            additionalContext: `[memory-index] ${entryKey} last-updated bumped to ${today} (${updatedCount} row${updatedCount > 1 ? 's' : ''})`,
         }));
     }
     process.exit(0);
