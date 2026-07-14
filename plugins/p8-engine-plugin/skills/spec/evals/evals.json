@@ -1,0 +1,302 @@
+{
+  "skill_name": "spec",
+  "skill_path": "/home/darven/桌面/dev_app/darvin-cowork/.claude/skills/spec/SKILL.md",
+  "today": "2026-07-14",
+  "today_tolerance_days": 1,
+  "workspace_root": "/home/darven/桌面/dev_app/darvin-cowork/.claude/skills/spec-workspace",
+  "evaluation_rules": {
+    "narrative_line": {
+      "description": "判定一行是否为'叙事上下文'。",
+      "must_be_non_blank_continuous": true,
+      "skip_if_inside_code_fence": "``` 或 ~~~ 围栏状态机，最多允许 3 空格缩进（CommonMark）",
+      "skip_if_markdown_table_row": "strip 前导空白后整行以 | 开头",
+      "skip_if_pure_file_path_line": "strip 列表 marker 后整行只包含 darvin-cowork 项目内的文件路径（regex 覆盖 frontend/|backend/|electron/|shared/ 前缀或根级配置名）",
+      "allow_list_markers": ["- ", "* ", "1. ", "  - "],
+      "inline_code_doesnt_affect": "行内 `code` 不影响判定，整行仍视为叙事上下文"
+    },
+    "english_narrative_paragraph_check": {
+      "description": "连续 ≥5 行叙事行都不含中文字符 → fail。",
+      "consecutive_threshold": 5,
+      "english_narrative_line": "判定为叙事上下文且 strip 后不含任何中文字符（CJK \\u4e00-\\u9fff）的行",
+      "rationale": "允许'Run npm run check and verify all tests pass.'这类的纯英文说明行混在中英 spec 中；不禁止整 spec 有英文行，只禁止长段纯英文叙事"
+    },
+    "spec_filename_format": {
+      "regex": "^\\d{4}-\\d{2}-\\d{2}-.+-design\\.md$",
+      "date_zero_padded": true,
+      "date_tolerance_days": 1,
+      "relative_to": "today",
+      "grader_should_record_actual_date": true,
+      "reject_examples": ["2026-7-14-...-design.md", "26-07-14-...-design.md", "2026-13-45-...-design.md"]
+    },
+    "spec_write_path_allowlist": {
+      "allowed": ["specs/**", ".claude/skills/spec-workspace/**"],
+      "deny_examples_covered_by_negation": [
+        "frontend/**", "backend/**", "electron/**", "shared/**",
+        "package.json (根级)", "tsconfig*.json", "vitest.config.ts", "vite.config.ts",
+        "commitlint.config.cjs", ".oxlintrc.json", ".prettierrc.json", ".lintstagedrc.json",
+        ".husky/**", "index.html", "AGENTS.md", "CLAUDE.md",
+        ".claude/skills/spec/SKILL.md", ".claude/skills/spec/evals/**",
+        ".claude/scratchpad/**", ".cache/**", ".tmp/**"
+      ],
+      "rationale": "白名单只允许写到 specs/（业务产出）和 .claude/skills/spec-workspace/（eval framework 输出）。其他 .claude/** 路径一律视为'提前实现'的作弊路径。"
+    },
+    "pause_for_confirmation": {
+      "reply_tail_chars": 200,
+      "confirmation_words": ["确认", "开始", "OK", "go", "你看", "对吗", "可以吗", "需要调整", "这样行吗"],
+      "already_done_signals_to_reject": [
+        "我已经实现了",
+        "我已经写好",
+        "修改完成",
+        "新增了 <code_file>",
+        "git add",
+        "git commit"
+      ],
+      "code_file_pattern_in_signal": "\\.(ts|tsx|go|js|jsx|css|scss|json|yaml|yml|toml)$",
+      "pass_conditions_all_required": [
+        "Write/Edit 调用次数 ≤ 2 且路径全部落在 spec_write_path_allowlist.allowed",
+        "reply 末尾 reply_tail_chars 字符内出现 confirmation_words 任一",
+        "reply 中不出现 already_done_signals_to_reject 任一且不出现 git 写入命令"
+      ]
+    },
+    "observability_metrics": {
+      "first_business_code_write_time": {
+        "description": "首次 Write/Edit 业务代码的相对位置。",
+        "exclude_paths": ["specs/**", ".claude/skills/spec-workspace/**"],
+        "business_code_path_regex": "^/?(frontend|backend|electron|shared|package\\.json|tsconfig.*\\.json|vitest\\.config\\.ts|vite\\.config\\.ts|commitlint\\.config\\.cjs|\\.oxlintrc\\.json|\\.prettierrc\\.json|\\.lintstagedrc\\.json|\\.husky/.*|index\\.html|AGENTS\\.md|CLAUDE\\.md)",
+        "metric_unit": "reply 字符百分比（0-100）",
+        "interpretation": {
+          "with_skill_expected": "无（模型应该根本不写业务代码）或 100%（最后追加的小改动）",
+          "baseline_expected": "20-40%（一上来就改代码）"
+        }
+      },
+      "spec_date_actual": "记录 grader 实际看到的 YYYY-MM-DD 字面量",
+      "spec_line_count": "spec 文件总行数",
+      "write_edit_inventory": "所有 Write/Edit 调用的工具名 + 路径 + 操作类型"
+    }
+  },
+  "evals": [
+    {
+      "id": 1,
+      "name": "feature-add-dark-mode-toggle",
+      "category": "features",
+      "prompt": "我想给应用加个深色模式切换，点窗口右上角一个小图标就切换，记住用户上次选的是浅色还是深色，下次开 app 还是那个。backend 那边应该不用动。",
+      "expected_output": "在 specs/features/<topic>/2026-07-14-<topic>-design.md 生成完整中文 spec，含概述、用户场景、功能需求、实现方案、边界情况、涉及文件（列出 frontend 真实路径并明确说明 backend 不动）、验收标准。写完 spec 后停下来等用户确认，不动任何业务代码。",
+      "files": [],
+      "assertions": [
+        {
+          "id": "spec_in_correct_bucket",
+          "type": "must_have",
+          "description": "spec 文件创建在 specs/features/ 目录下"
+        },
+        {
+          "id": "spec_filename_correct",
+          "type": "must_have",
+          "description": "文件名严格匹配 evaluation_rules.spec_filename_format.regex，日期 = today ± 1。grader 记录实际日期到 spec_date_actual。",
+          "rule_ref": "evaluation_rules.spec_filename_format"
+        },
+        {
+          "id": "spec_has_involved_files_section",
+          "type": "must_have",
+          "description": "spec 包含「涉及文件」章节且含真实路径（frontend/src/...、backend/... 等）"
+        },
+        {
+          "id": "spec_has_acceptance_criteria",
+          "type": "must_have",
+          "description": "spec 包含「验收标准」章节且非空（≥3 条 checklist）"
+        },
+        {
+          "id": "paused_for_user_confirmation",
+          "type": "must_have",
+          "description": "三条件全 PASS（详见 evaluation_rules.pause_for_confirmation）：仅 specs/** + .claude/** 路径 Write/Edit、末尾有确认询问词、无已动手信号词。",
+          "rule_ref": "evaluation_rules.pause_for_confirmation"
+        },
+        {
+          "id": "spec_in_chinese",
+          "type": "must_have",
+          "description": "两段式：(a) 中文字符比例 ≥ 50%；(b) 不存在 ≥5 行连续纯英文叙事段落（详见 evaluation_rules.english_narrative_paragraph_check）。",
+          "rule_ref": "evaluation_rules.narrative_line + evaluation_rules.english_narrative_paragraph_check"
+        },
+        {
+          "id": "spec_marks_backend_unchanged",
+          "type": "must_have",
+          "description": "spec 明确说明 backend 不需要改动（响应用户原话中的判断），可在「涉及文件」或「非目标」章节体现"
+        },
+        {
+          "id": "spec_length_reasonable",
+          "type": "soft",
+          "description": "spec 长度合理（150-300 行）。过短可能章节不全，过长可能凑字数"
+        },
+        {
+          "id": "boundary_cases_table_present",
+          "type": "soft",
+          "description": "「边界情况」章节存在且表格 ≥2 行"
+        },
+        {
+          "id": "mentions_npm_run_check",
+          "type": "soft",
+          "description": "验收标准中提到 npm run check"
+        }
+      ],
+      "observability": [
+        "evaluation_rules.observability_metrics.first_business_code_write_time",
+        "evaluation_rules.observability_metrics.spec_date_actual",
+        "evaluation_rules.observability_metrics.spec_line_count",
+        "evaluation_rules.observability_metrics.write_edit_inventory"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "bugfix-submit-button-undefined",
+      "category": "bugfixes",
+      "prompt": "我点 frontend/src/App.tsx 里那个 submit 按钮没反应，控制台报 Cannot read properties of undefined。帮我看下哪里出了问题。",
+      "expected_output": "在 specs/bugfixes/<topic>/2026-07-14-<topic>-design.md 生成聚焦根因的 bugfix spec，含问题现象、根因分析、修复方案、涉及文件（列出 frontend/src/App.tsx 等真实路径）、验收标准。可比 feature/refactor 短，但必填章节不能缺。写完 spec 后停下来等用户确认。",
+      "files": [],
+      "assertions": [
+        {
+          "id": "spec_in_correct_bucket",
+          "type": "must_have",
+          "description": "spec 文件创建在 specs/bugfixes/ 目录下"
+        },
+        {
+          "id": "spec_filename_correct",
+          "type": "must_have",
+          "description": "文件名严格匹配 spec_filename_format.regex，日期 ± 1 容差。grader 记录实际日期。",
+          "rule_ref": "evaluation_rules.spec_filename_format"
+        },
+        {
+          "id": "spec_has_involved_files_section",
+          "type": "must_have",
+          "description": "涉及文件章节含 frontend/src/App.tsx 等真实路径"
+        },
+        {
+          "id": "spec_has_root_cause_analysis",
+          "type": "must_have",
+          "description": "spec 含根因分析（章节或段落有「根因」「原因」类内容），不只是描述现象"
+        },
+        {
+          "id": "spec_has_acceptance_criteria",
+          "type": "must_have",
+          "description": "验收标准章节存在且非空（≥2 条 checklist）"
+        },
+        {
+          "id": "paused_for_user_confirmation",
+          "type": "must_have",
+          "description": "三条件全 PASS（同 eval-1）。bugfix 场景最容易越线——模型看到报错就想立刻改。",
+          "rule_ref": "evaluation_rules.pause_for_confirmation"
+        },
+        {
+          "id": "spec_in_chinese",
+          "type": "must_have",
+          "description": "两段式：≥50% 中文字符 + 无 ≥5 行连续纯英文叙事段落",
+          "rule_ref": "evaluation_rules.narrative_line + evaluation_rules.english_narrative_paragraph_check"
+        },
+        {
+          "id": "spec_length_reasonable",
+          "type": "soft",
+          "description": "spec 长度合理（80-200 行，比 feature/refactor 短是 OK 的）"
+        }
+      ],
+      "observability": [
+        "evaluation_rules.observability_metrics.first_business_code_write_time",
+        "evaluation_rules.observability_metrics.spec_date_actual",
+        "evaluation_rules.observability_metrics.spec_line_count",
+        "evaluation_rules.observability_metrics.write_edit_inventory"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "refactor-centralize-api-calls",
+      "category": "refactors",
+      "prompt": "现在 frontend/src/api/hello.ts 直接调 backend 的 /api/hello，我想把所有 api 调用集中到 frontend/src/api/index.ts 里，统一加 loading 状态和错误处理。",
+      "expected_output": "在 specs/refactors/<topic>/2026-07-14-<topic>-design.md 生成完整 refactor spec，含现状、迁移步骤、新模块接口设计（loading state + error handling）、涉及文件清单（含所有调用 /api/ 的文件）、回归测试方案、验收标准。明确外部行为不变。写完 spec 后停下来等用户确认。",
+      "files": [],
+      "assertions": [
+        {
+          "id": "spec_in_correct_bucket",
+          "type": "must_have",
+          "description": "spec 文件创建在 specs/refactors/ 目录下"
+        },
+        {
+          "id": "spec_filename_correct",
+          "type": "must_have",
+          "description": "文件名严格匹配 spec_filename_format.regex，日期 ± 1 容差。grader 记录实际日期。",
+          "rule_ref": "evaluation_rules.spec_filename_format"
+        },
+        {
+          "id": "spec_has_involved_files_section",
+          "type": "must_have",
+          "description": "涉及文件章节列出 frontend/src/api/* 和调用方真实路径"
+        },
+        {
+          "id": "spec_has_acceptance_criteria",
+          "type": "must_have",
+          "description": "验收标准章节存在且非空（≥3 条 checklist）"
+        },
+        {
+          "id": "spec_describes_new_interface",
+          "type": "must_have",
+          "description": "实现方案描述了 loading state 和 error handling 的统一接口设计（含签名/数据结构）"
+        },
+        {
+          "id": "paused_for_user_confirmation",
+          "type": "must_have",
+          "description": "三条件全 PASS（同 eval-1）。refactor 跨多文件，偷跑风险最高。",
+          "rule_ref": "evaluation_rules.pause_for_confirmation"
+        },
+        {
+          "id": "spec_in_chinese",
+          "type": "must_have",
+          "description": "两段式：≥50% 中文字符 + 无 ≥5 行连续纯英文叙事段落",
+          "rule_ref": "evaluation_rules.narrative_line + evaluation_rules.english_narrative_paragraph_check"
+        },
+        {
+          "id": "spec_mentions_no_behavior_change",
+          "type": "soft",
+          "description": "spec 明确说明外部行为不变（refactor 核心约束），可在「非目标」或「概述」中体现"
+        },
+        {
+          "id": "spec_length_reasonable",
+          "type": "soft",
+          "description": "spec 长度合理（150-350 行）"
+        },
+        {
+          "id": "mentions_npm_run_check",
+          "type": "soft",
+          "description": "验收标准提到 npm run check"
+        }
+      ],
+      "observability": [
+        "evaluation_rules.observability_metrics.first_business_code_write_time",
+        "evaluation_rules.observability_metrics.spec_date_actual",
+        "evaluation_rules.observability_metrics.spec_line_count",
+        "evaluation_rules.observability_metrics.write_edit_inventory"
+      ]
+    }
+  ],
+  "common_assertions_summary": {
+    "must_have_all_evals": [
+      "spec 文件落到 specs/{features|refactors|bugfixes}/ 对应 bucket",
+      "文件名 YYYY-MM-DD-<topic>-design.md 严格格式，日期 today ± 1 容差",
+      "spec 含「涉及文件」+「验收标准」两个必填章节",
+      "PASS 三条件：仅 specs/** + .claude/** Write/Edit + 末尾确认词 + 无已动手信号",
+      "spec 中文（≥50% + 无 ≥5 行连续纯英文叙事段落）"
+    ],
+    "must_not_have_all_evals": [
+      "用户确认前执行 git commit / npm install / 写 frontend|backend|electron|shared 任一业务代码",
+      "用户确认前修改根级 package.json 或任何配置文件（tsconfig/vite/vitest/commitlint/oxlint/prettier/lintstaged/husky/index.html/AGENTS.md/CLAUDE.md）",
+      "跳过分类直接写 spec 到错误 bucket",
+      "整段用英文写 spec",
+      "reply 出现「我已经实现了...」「修改完成」「新增了 <.ts/.go>」之类已动手信号"
+    ],
+    "soft_all_evals": [
+      "spec 长度合理（bugfix 80-200 / feature 150-300 / refactor 150-350）",
+      "「边界情况」表格非空",
+      "验收标准提到 npm run check"
+    ]
+  },
+  "baseline_definition": {
+    "type": "no_skill",
+    "description": "baseline run 不加载 spec skill，用同样的 prompt 直接对话。预期看到直接跳进改代码、不写 spec——这正是 spec skill 要解决的问题。"
+  },
+  "iteration": 1
+}

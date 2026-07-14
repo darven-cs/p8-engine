@@ -1,6 +1,6 @@
 # P8 Engine
 
-**工程方法论 + AI 记忆系统 —— 一个 plugin，两个 skills，全面提升 AI 编码质量。**
+**工程方法论 + AI 记忆系统 + Spec 驱动开发 —— 一个 plugin，三个 skills，全面提升 AI 编码质量。**
 
 [中文](#中文) | [English](#english)
 
@@ -10,12 +10,13 @@
 
 ### 这是什么
 
-P8 Engine 是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Plugin，包含两个 skills：
+P8 Engine 是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Plugin，包含三个 skills：
 
 | Skill | 用途 | 触发方式 |
 |-------|------|----------|
 | **p8-engine** | 工程方法论 — 铁律、链路预判、行动后自检、全链路审视、能动性鞭策 | `/p8-engine` |
 | **inject-memory** | 给任意项目注入轻量 AI 记忆系统 | `/inject-memory` |
+| **spec** | Spec 驱动开发 — 改代码前先生成中文设计文档并与用户确认 | 自动触发（新增功能/重构/修复非平凡 bug/多文件改动） |
 
 ### 安装
 
@@ -23,12 +24,13 @@ P8 Engine 是一个 [Claude Code](https://docs.anthropic.com/en/docs/claude-code
 # 添加 marketplace
 claude plugin marketplace add darven-cs/p8-engine
 
-# 安装 plugin（一次安装，两个 skills 都可用）
+# 安装 plugin（一次安装，三个 skills 都可用）
 claude plugin install p8-engine@p8-engine
 
 # 激活（启动新会话后）
 /p8-engine          # 激活工程方法论
 /inject-memory      # 注入记忆系统到目标项目
+# spec skill 在你提出新功能/重构/非平凡 bug 修复时自动触发，无需手动调用
 ```
 
 ---
@@ -167,15 +169,65 @@ progress/
 
 ---
 
-### 两个 skills 怎么配合
+### spec：Spec 驱动开发（SDD）
+
+解决一个核心问题：**AI 直接跳进代码改，用户失去决策点**。改动完成才发现方向错了，返工成本极高。
+
+spec skill 的本质是把**隐式决策变成显式决策**——在动代码之前，先生成一份中文设计文档（spec），列出「要解决什么问题、怎么解决、改哪些文件、验收标准是什么」，让用户先点头或调整，再开始实现。
+
+#### 自动触发，无需手动调用
+
+当用户提出以下类型的需求时，spec skill 会自动介入：
+
+| 触发 | 不触发 |
+|------|--------|
+| 新增用户可见能力（按钮/页面/接口/字段） | 单文件 typo / 文案修正 |
+| 重构现有代码（移动文件/改架构/换库） | 依赖升级、版本号变更 |
+| 修复非平凡 bug（需分析根因/多文件） | 纯文档/注释更新 |
+| 涉及 2 个及以上文件的改动 | 单行 lint 修复 |
+| 提到「设计/方案/规划/先想清楚」 | 用户明确说「快速 prototype」 |
+
+边界模糊时**默认触发**——写一份薄 spec 比跳过 spec 便宜。
+
+#### 工作流
+
+```
+第 0 步：确保 specs/ 框架存在（首次自动 bootstrap 目录 + README）
+第 1 步：分类（feature / refactor / bugfix）+ 选 kebab-case 主题名
+第 2 步：创建 spec 文件 specs/<bucket>/<topic>/<YYYY-MM-DD>-<topic>-design.md
+第 3 步：填充中文模板（概述/用户场景/功能需求/实现方案/边界情况/涉及文件/验收标准）
+第 4 步：暂停 → 展示 spec → 等用户确认（关键决策点）
+第 5 步：按 spec 的「涉及文件」清单逐项实现
+第 6 步：对照「验收标准」自检，回复里贴实际改动 + 偏离说明
+```
+
+#### 它治什么病
+
+| LLM 编码常见问题 | spec skill 怎么治 |
+|-----------------|------------------|
+| 用户还没确认方向，AI 已经改完一坨代码 | 第 4 步强制暂停等确认，写代码前先对齐 |
+| 改完发现根本不是用户想要的 | spec 在动代码前暴露方案缺陷，改 spec 比改代码便宜 |
+| 多会话协作上下文丢失 | spec 文件就是历史决策记录，下次会话能重建上下文 |
+| 范围蔓延，越做越多 | 模板里有「非目标」章节，显式划定边界 |
+| 改动不可追溯 | spec 文件进 git，配合日期命名保留迭代历史 |
+
+#### 它治什么病（spec 之外的判断）
+
+- 简单文档改动、POC 不需要 spec——但 POC 变成正式代码时要补
+- spec 不是 PR description，PR description 简短指向 spec 即可
+
+---
+
+### 三个 skills 怎么配合
 
 ```
 /inject-memory          # 第一步：给项目注入记忆系统（一次性）
 /p8-engine              # 第二步：激活工程方法论（每次会话）
                         # 之后正常开发
+# spec skill 在你提新功能/重构/非平凡 bug 修复时自动触发
 ```
 
-**p8-engine 的行动后自检**产出的战果，可以沉淀到 inject-memory 的 `memory/bugs/` 或 `memory/modules/` 中。
+**spec skill** 在改动前生成设计文档，决策显式化、可追溯；**p8-engine 的行动后自检**产出的战果，可以沉淀到 inject-memory 的 `memory/bugs/` 或 `memory/modules/` 中。
 
 **inject-memory 的记忆**在下次会话被 p8-engine 的启动协议加载（步骤一.五：经验记忆加载），形成闭环：
 
@@ -214,6 +266,7 @@ git clone https://github.com/darven-cs/p8-engine.git /tmp/p8-engine
 mkdir -p .claude/skills
 cp -r /tmp/p8-engine/plugins/p8-engine-plugin/skills/p8-engine .claude/skills/
 cp -r /tmp/p8-engine/plugins/p8-engine-plugin/skills/inject-memory .claude/skills/
+cp -r /tmp/p8-engine/plugins/p8-engine-plugin/skills/spec .claude/skills/
 
 # 3. 复制 commands
 mkdir -p .claude/commands
@@ -226,6 +279,7 @@ cp /tmp/p8-engine/plugins/p8-engine-plugin/commands/*.md .claude/commands/
 # 检查 skills 是否就位
 ls .claude/skills/p8-engine/SKILL.md
 ls .claude/skills/inject-memory/SKILL.md
+ls .claude/skills/spec/SKILL.md
 
 # 检查 commands 是否就位
 ls .claude/commands/p8-engine.md
@@ -269,10 +323,14 @@ p8-engine/
 │       │   ├── p8-engine/            # 工程方法论 skill
 │       │   │   ├── SKILL.md
 │       │   │   └── references/
-│       │   └── inject-memory/        # 记忆系统注入 skill
+│       │   ├── inject-memory/        # 记忆系统注入 skill
+│       │   │   ├── SKILL.md
+│       │   │   ├── hooks/
+│       │   │   └── templates/
+│       │   └── spec/                 # Spec 驱动开发 skill
 │       │       ├── SKILL.md
-│       │       ├── hooks/
-│       │       └── templates/
+│       │       ├── assets/
+│       │       └── evals/
 │       └── commands/
 │           ├── p8-engine.md
 │           └── inject-memory.md
@@ -287,12 +345,13 @@ p8-engine/
 
 ### What is this
 
-P8 Engine is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Plugin with two skills:
+P8 Engine is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Plugin with three skills:
 
 | Skill | Purpose | Trigger |
 |-------|---------|---------|
 | **p8-engine** | Engineering methodology — iron rules, chain preview, post-action review, full-chain audit, agency enforcement | `/p8-engine` |
 | **inject-memory** | Inject lightweight AI memory system into any project | `/inject-memory` |
+| **spec** | Spec-Driven Development — generate a design doc and confirm with the user before any non-trivial code change | Auto-triggered (new feature / refactor / non-trivial bug / multi-file change) |
 
 ### Installation
 
@@ -300,7 +359,7 @@ P8 Engine is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) Plu
 # Add marketplace
 claude plugin marketplace add darven-cs/p8-engine
 
-# Install plugin (one install, both skills available)
+# Install plugin (one install, all three skills available)
 claude plugin install p8-engine@p8-engine
 
 # Activate (after starting new session)
@@ -354,7 +413,13 @@ Every new Claude session loads `memory/_index.md` automatically. The PostToolUse
 
 Rule of thumb: **Will this memory prevent duplicate mistakes or duplicate research next session?** Yes → remember. No → don't.
 
-### How the two skills work together
+### spec: Spec-Driven Development (SDD)
+
+Solves one core problem: **the user loses decision points when the AI jumps straight into code**. Discovering the wrong direction after the change is done is expensive to rework.
+
+The spec skill makes **implicit decisions explicit** — before touching code, it generates a design doc (spec) listing the problem, the approach, the files to change, and the acceptance criteria. The user confirms or adjusts, then implementation begins. It auto-triggers on new features, refactors, and non-trivial bug fixes (no manual invocation needed).
+
+### How the three skills work together
 
 ```
 /inject-memory          # Step 1: inject memory system (once)
